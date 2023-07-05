@@ -29,7 +29,7 @@ type States<T extends Record<string, any>> = Omit<{
 
 type PiniaStore<G extends Record<string, any>> = Store<string, States<G>, Getters<G>, Actions<G>>
 
-export function useVm<T extends (new (...args: any) => any), G extends InstanceType<T> = InstanceType<T>>(Module0: T, id?: string)
+export function useVm<T extends (new (...args: any) => any), G extends InstanceType<T> = InstanceType<T>>(Module0: T, child = false, id?: string)
     : G & Omit<PiniaStore<G>, keyof G> {
     const pinia = getActivePinia();
     const {$container, payload} = useNuxtApp();
@@ -37,23 +37,10 @@ export function useVm<T extends (new (...args: any) => any), G extends InstanceT
     const instance = $container.resolve(Module);
     id = id || Module.name;
 
-    /**
-     * Update data with injected classes on server side
-     */
-    if (process.server && Module._storeOptions) {
-        for (const key of Object.keys(instance)) {
-            if (instance.hasOwnProperty(key)) {
-                if (instance[key].constructor.$injected) {
-                    Module._storeOptions.initialState[key] = instance[key];
-                }
-            }
-        }
-    }
-
     /*
     * Build store on server side
     */
-    if (!Module._storeOptions) {
+    if (!child || (child && !Module._storeOptions)) {
         const option = {
             /**
              * Set initialState from nuxt.payload
@@ -86,6 +73,23 @@ export function useVm<T extends (new (...args: any) => any), G extends InstanceT
         Module._storeOptions = option;
     }
 
+    /**
+     * Update data with injected classes on server side
+     */
+    if (process.server && Module._storeOptions) {
+        for (const key of Object.keys(instance)) {
+            if (instance.hasOwnProperty(key)) {
+                if (instance[key].constructor.$injected) {
+                    Module._storeOptions.initialState[key] = instance[key];
+                }
+            }
+        }
+    }
+
+    if (!Module._storeOptions) {
+        throw new Error('Module can not be found. It seems like you forgot to call general modal with "child: false"');
+    }
+
     const {
         initialState,
         getters,
@@ -110,10 +114,10 @@ export function useVm<T extends (new (...args: any) => any), G extends InstanceT
     }
 
     /**
-     * Automatic model dispose on view onMount
+     * Automatic model dispose on view unMount
      */
     onUnmounted(() => {
-        if (!pinia || !id) {
+        if (!pinia || !id || child) {
             return;
         }
 

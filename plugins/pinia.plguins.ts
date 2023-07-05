@@ -42,7 +42,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         /**
          * Set builded state from nuxt.payload
          */
-        else if (nuxtApp.payload && nuxtApp.payload.pinia) {
+        else if (nuxtApp.payload && nuxtApp.payload.pinia && !pinia.state.value) {
             pinia.state.value = nuxtApp.payload.pinia as Record<string, StateTree>
         }
     }, {deep: true})

@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import {useVm} from "~/client/shared/addons/pinia.addon";
 import {IndexScreenVm} from "~/client/screens/index-screen/index-screen.vm";
+import {useRegularStore} from "~/client/shared/stores/regular.store";
+import {useVm} from "~/client/shared/composables/useVm";
+
+const regularStore = useRegularStore();
 
 const vm = useVm(IndexScreenVm);
 if (process.server) {
@@ -21,7 +24,8 @@ if (process.server) {
     increment
   </button>
   <h2>Is sending: {{ vm.sending.get('default') }}</h2>
-  {{ vm.counter }}
+  <h2>Counter {{ vm.counter }}</h2>
+  <h2>RegularStore: hello {{ regularStore.hello }}</h2>
 </template>
 
 <style scoped>
