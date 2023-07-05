@@ -7,7 +7,7 @@ import {defineStore, getActivePinia, Store} from 'pinia';
 
 interface ModuleExt {
     _storeOptions?: {
-        initialState: NonNullable<unknown>,
+        initialState: NonNullable<any>,
         getters: NonNullable<unknown>,
         actions: NonNullable<unknown>
     };
@@ -29,37 +29,41 @@ type States<T extends Record<string, any>> = Omit<{
 
 type PiniaStore<G extends Record<string, any>> = Store<string, States<G>, Getters<G>, Actions<G>>
 
-export function useVm<T extends (new (args?: any) => any), G extends InstanceType<T> = InstanceType<T>>(Module0: T, child: boolean = false, id?: string)
+export function useVm<T extends (new (...args: any) => any), G extends InstanceType<T> = InstanceType<T>>(Module0: T, id?: string)
     : G & Omit<PiniaStore<G>, keyof G> {
     const pinia = getActivePinia();
-    const {$container} = useNuxtApp();
+    const {$container, payload} = useNuxtApp();
     const Module = Module0 as T & ModuleExt;
+    const instance = $container.resolve(Module);
     id = id || Module.name;
 
+    /**
+     * Update data with injected classes on server side
+     */
+    if (process.server && Module._storeOptions) {
+        for (const key of Object.keys(instance)) {
+            if (instance.hasOwnProperty(key)) {
+                if (instance[key].constructor.$injected) {
+                    Module._storeOptions.initialState[key] = instance[key];
+                }
+            }
+        }
+    }
 
-    if (!child || (child && !Module._storeOptions)) {
+    /*
+    * Build store on server side
+    */
+    if (!Module._storeOptions) {
         const option = {
-            initialState: {} as any,
+            initialState: payload.pinia?.hasOwnProperty(Module.name) ? payload.pinia[Module.name] as any : {},
             getters: {} as any,
             actions: {} as any
         };
 
-        const instance = $container.resolve(Module);
-
         for (const key of Object.keys(instance)) {
             if (instance.hasOwnProperty(key)) {
-                if (instance[key].constructor.$injected) {
-                    option.getters[key] = () => instance[key];
-                    continue;
-                }
-
-                // @ts-ignore
-                if (instance[key]?.toPOJO && typeof window === 'undefined') {
-                    option.initialState[key] = instance[key].toPOJO();
-                    continue;
-                }
-
-                option.initialState[key] = instance[key];
+                if (!option.initialState[key])
+                    option.initialState[key] = instance[key];
             }
         }
 
@@ -92,6 +96,9 @@ export function useVm<T extends (new (args?: any) => any), G extends InstanceTyp
         actions
     })() as Store & { $initialState: any };
 
+    /**
+     * Store inital state of pinia store
+     */
     if (!store.$initialState) {
         Object.defineProperty(store, '$initialState', {
             enumerable: false,
@@ -100,13 +107,17 @@ export function useVm<T extends (new (args?: any) => any), G extends InstanceTyp
         });
     }
 
+    /**
+     * Automatic model dispose on view onMount
+     */
     onUnmounted(() => {
-        if (!pinia || !id || child) {
+        if (!pinia || !id) {
             return;
         }
 
         store.$reset();
         store.$state = store.$initialState;
+        store.$dispose();
     });
 
     Object.setPrototypeOf(store, Module.prototype);
