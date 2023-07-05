@@ -29,6 +29,9 @@ export function defineInjectionTokenMetadata(
             : data;
         Reflect.defineMetadata(INJECTION_TOKEN_METADATA_KEY, descriptors, target);
 
+        /**
+         * Mark service as injected ( to exclude from nuxt.payload in future )
+         */
         Object.defineProperty(descriptors[parameterIndex], '$injected', {
             value: true,
             enumerable: false,
