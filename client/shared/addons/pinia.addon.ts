@@ -55,6 +55,9 @@ export function useVm<T extends (new (...args: any) => any), G extends InstanceT
     */
     if (!Module._storeOptions) {
         const option = {
+            /**
+             * Set initialState from nuxt.payload
+             */
             initialState: payload.pinia?.hasOwnProperty(Module.name) ? payload.pinia[Module.name] as any : {},
             getters: {} as any,
             actions: {} as any
@@ -62,6 +65,9 @@ export function useVm<T extends (new (...args: any) => any), G extends InstanceT
 
         for (const key of Object.keys(instance)) {
             if (instance.hasOwnProperty(key)) {
+                /**
+                 * Set new data only if it is not included from payload
+                 */
                 if (!option.initialState[key])
                     option.initialState[key] = instance[key];
             }
@@ -78,10 +84,6 @@ export function useVm<T extends (new (...args: any) => any), G extends InstanceT
         }
 
         Module._storeOptions = option;
-    }
-
-    if (!Module._storeOptions) {
-        throw new Error('Module can not be found. It seems like you forgot to call general modal with "child: false"');
     }
 
     const {
