@@ -1,6 +1,6 @@
 /**
- @author WayZer
- inspired by vuex-class-modules
+ @author Fidden
+ inspired by WayZer/pinia-class-store
  */
 import {onUnmounted} from '#imports';
 import {defineStore, getActivePinia, Store} from 'pinia';
@@ -15,16 +15,17 @@ interface ModuleExt {
 
 // magic, see https://github.com/Microsoft/TypeScript/issues/27024
 type Magic<X> = (<T>() => T extends X ? 1 : 2)
-type Magic2<X> = (<T>() => T extends X ? 1 : 2)
 
 type Actions<T extends Record<string, any>> = {
     [P in keyof T as T[P] extends (...args: any[]) => any ? P : never]: T[P];
 };
+
 type Getters<T extends Record<string, any>> = {
-    [P in keyof T as Magic<Pick<T, P>> extends Magic2<Readonly<Pick<T, P>>> ? P : never]: T[P];
+    [P in keyof T as Magic<Pick<T, P>> extends Magic<Readonly<Pick<T, P>>> ? P : never]: T[P];
 };
+
 type States<T extends Record<string, any>> = Omit<{
-    [P in keyof T as Magic<Pick<T, P>> extends Magic2<Readonly<Pick<T, P>>> ? never : P]: T[P];
+    [P in keyof T as Magic<Pick<T, P>> extends Magic<Readonly<Pick<T, P>>> ? never : P]: T[P];
 }, keyof Actions<T>>;
 
 type PiniaStore<G extends Record<string, any>> = Store<string, States<G>, Getters<G>, Actions<G>>
@@ -100,18 +101,7 @@ export function useVm<T extends (new (...args: any) => any), G extends InstanceT
         state: () => initialState,
         getters,
         actions
-    })() as Store & { $initialState: any };
-
-    /**
-     * Store inital state of pinia store
-     */
-    if (!store.$initialState) {
-        Object.defineProperty(store, '$initialState', {
-            enumerable: false,
-            writable: false,
-            value: true
-        });
-    }
+    })() as Store;
 
     /**
      * Automatic model dispose on view unMount
@@ -121,8 +111,7 @@ export function useVm<T extends (new (...args: any) => any), G extends InstanceT
             return;
         }
 
-        store.$reset();
-        store.$state = store.$initialState;
+        delete pinia.state.value[id];
         store.$dispose();
     });
 

@@ -1,8 +1,8 @@
 import {LoggerService} from "~/client/shared/services/logger.service";
 import {injectable} from "tsyringe";
-import {inject} from "~/client/shared/decorators/inject";
+import {inject} from "~/client/shared/decorators/inject.decorator";
 import {SendingService} from "~/client/shared/services/sending.service";
-import {sending} from "~/client/shared/decorators/sending";
+import {sending} from "~/client/shared/decorators/sending.decorator";
 import {ISendable} from "~/client/shared/types/sendable";
 import {ErrorService} from "~/client/shared/services/error.service";
 
