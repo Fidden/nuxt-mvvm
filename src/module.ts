@@ -9,8 +9,8 @@ export interface ModuleOptions {
 
 export default defineNuxtModule<ModuleOptions>({
 	meta: {
-		name: 'nuxt-pinia-di',
-		configKey: 'piniaDI'
+		name: 'nuxt-mvvm-di',
+		configKey: 'nuxtMvmmDi'
 	},
 	defaults: {},
 	setup(options, nuxt: Nuxt) {
