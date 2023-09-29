@@ -19,11 +19,11 @@ export default defineNuxtModule<ModuleOptions>({
         addImports([
             {
                 name: 'useVm',
-                from: resolver.resolve('./composables/useVm')
+                from: resolver.resolve('./runtime/composables/useVm')
             },
             {
                 name: 'useChildVm',
-                from: resolver.resolve('./composables/useChildVm')
+                from: resolver.resolve('./runtime/composables/useChildVm')
             },
             {
                 name: 'inject',
