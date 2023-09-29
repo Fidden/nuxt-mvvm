@@ -4,117 +4,103 @@
  */
 import {onUnmounted, useNuxtApp} from '#imports';
 import {defineStore, getActivePinia, Store} from 'pinia';
+import {InjectionToken} from '../types/injection-token';
+import {ClassInstanceType, ModuleExt, PiniaStore, VmFlags} from '../types/vm';
 
-interface ModuleExt {
-    _storeOptions?: {
-        initialState: NonNullable<any>,
-        getters: NonNullable<unknown>,
-        actions: NonNullable<unknown>
-    };
-}
 
-// magic, see https://github.com/Microsoft/TypeScript/issues/27024
-type Magic<X> = (<T>() => T extends X ? 1 : 2)
+export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = InstanceType<T>>(Module0: T, flags: VmFlags[] = [])
+	: G & Omit<PiniaStore<G>, keyof G> {
+	const pinia = getActivePinia();
+	const {$container, payload} = useNuxtApp();
+	const Module = Module0 as T & ModuleExt;
+	const instance = $container.resolve(Module);
+	const id = Module.name;
+	const injectionTokens = Reflect.getOwnMetadata('injectionTokens', Module);
+	const injectedKeys = injectionTokens ? Object.values<InjectionToken>(injectionTokens).map(item => item.name) : undefined;
+	const isChild = flags.includes(VmFlags.CHILD);
 
-type Actions<T extends Record<string, any>> = {
-    [P in keyof T as T[P] extends (...args: any[]) => any ? P : never]: T[P];
-};
+	/*
+	* Build store on server side
+	*/
+	if (!isChild || (isChild && !Module._storeOptions)) {
+		const option = {
+			/**
+			 * Set initialState from nuxt.payload
+			 */
+			initialState: payload.pinia?.hasOwnProperty(Module.name) ? (payload.pinia as Record<string, any>)[Module.name] : {},
+			getters: {} as any,
+			actions: {} as any
+		};
 
-type Getters<T extends Record<string, any>> = {
-    [P in keyof T as Magic<Pick<T, P>> extends Magic<Readonly<Pick<T, P>>> ? P : never]: T[P];
-};
+		for (const key of Object.keys(instance)) {
+			if (instance.hasOwnProperty(key)) {
+				/**
+				 * Set new data only if it is not included from payload
+				 */
+				if (!option.initialState[key])
+					option.initialState[key] = instance[key];
+			}
+		}
 
-type States<T extends Record<string, any>> = Omit<{
-    [P in keyof T as Magic<Pick<T, P>> extends Magic<Readonly<Pick<T, P>>> ? never : P]: T[P];
-}, keyof Actions<T>>;
+		for (const key of Object.getOwnPropertyNames(Module.prototype)) {
+			const descriptor = Object.getOwnPropertyDescriptor(Module.prototype, key)!;
+			if (descriptor.get) {
+				option.getters[key] = (state: G) => descriptor.get!.call(state);
+			}
+			if (descriptor.value) {
+				option.actions[key] = Module.prototype[key];
+			}
+		}
 
-type PiniaStore<G extends Record<string, any>> = Store<string, States<G>, Getters<G>, Actions<G>>
+		Module._storeOptions = option;
+	}
 
-export function useVm<T extends (new (...args: any) => any), G extends InstanceType<T> = InstanceType<T>>(Module0: T, child = false, id?: string)
-    : G & Omit<PiniaStore<G>, keyof G> {
-    const pinia = getActivePinia();
-    const {$container, payload} = useNuxtApp();
-    const Module = Module0 as T & ModuleExt;
-    const instance = $container.resolve(Module);
-    id = id || Module.name;
+	/**
+	 * Update data with injected classes on the server side
+	 */
+	if (process.server && Module._storeOptions && !isChild) {
+		for (const key of Object.keys(instance)) {
+			if (!instance.hasOwnProperty(key) || !injectedKeys?.includes(instance[key]?.constructor?.name)) {
+				continue;
+			}
 
-    /*
-    * Build store on server side
-    */
-    if (!child || (child && !Module._storeOptions)) {
-        const option = {
-            /**
-             * Set initialState from nuxt.payload
-             */
-            initialState: payload.pinia?.hasOwnProperty(Module.name) ? (payload.pinia as Record<string, any>)[Module.name] : {},
-            getters: {} as any,
-            actions: {} as any
-        };
+			Module._storeOptions.initialState[key] = instance[key];
+			Object.defineProperty(Module._storeOptions.initialState[key], '$injected', {
+				writable: false,
+				enumerable: false,
+				value: true
+			});
+		}
+	}
 
-        for (const key of Object.keys(instance)) {
-            if (instance.hasOwnProperty(key)) {
-                /**
-                 * Set new data only if it is not included from payload
-                 */
-                if (!option.initialState[key])
-                    option.initialState[key] = instance[key];
-            }
-        }
+	if (!Module._storeOptions) {
+		throw new Error('Module can not be found. It seems like you forgot to call general modal with "child: false"');
+	}
 
-        for (const key of Object.getOwnPropertyNames(Module.prototype)) {
-            const descriptor = Object.getOwnPropertyDescriptor(Module.prototype, key)!;
-            if (descriptor.get) {
-                option.getters[key] = (state: G) => descriptor.get!.call(state);
-            }
-            if (descriptor.value) {
-                option.actions[key] = Module.prototype[key];
-            }
-        }
+	const {
+		initialState,
+		getters,
+		actions
+	} = Module._storeOptions;
 
-        Module._storeOptions = option;
-    }
+	const store = defineStore(id, {
+		state: () => initialState,
+		getters,
+		actions
+	})() as Store;
 
-    /**
-     * Update data with injected classes on server side
-     */
-    if (process.server && Module._storeOptions) {
-        for (const key of Object.keys(instance)) {
-            if (instance.hasOwnProperty(key)) {
-                if (instance[key].constructor.$injected) {
-                    Module._storeOptions.initialState[key] = instance[key];
-                }
-            }
-        }
-    }
+	/**
+	 * Automatic model dispose on view unMount
+	 */
+	onUnmounted(() => {
+		if (!pinia || !id || isChild) {
+			return;
+		}
 
-    if (!Module._storeOptions) {
-        throw new Error('Module can not be found. It seems like you forgot to call general modal with "child: false"');
-    }
+		delete pinia.state.value[id];
+		store.$dispose();
+	});
 
-    const {
-        initialState,
-        getters,
-        actions
-    } = Module._storeOptions;
-
-    const store = defineStore(id, {
-        state: () => initialState,
-        getters,
-        actions
-    })() as Store;
-
-    /**
-     * Automatic model dispose on view unMount
-     */
-    onUnmounted(() => {
-        if (!pinia || !id || child) {
-            return;
-        }
-
-        delete pinia.state.value[id];
-        store.$dispose();
-    });
-
-    Object.setPrototypeOf(store, Module.prototype);
-    return store as G;
+	Object.setPrototypeOf(store, Module.prototype);
+	return store as G;
 }

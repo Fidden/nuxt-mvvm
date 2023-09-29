@@ -1,4 +1,4 @@
-import {defineNuxtModule, addPlugin, createResolver, addImports} from '@nuxt/kit';
+import {addImports, addPlugin, createResolver, defineNuxtModule} from '@nuxt/kit';
 import {Nuxt} from '@nuxt/schema';
 
 
@@ -22,8 +22,13 @@ export default defineNuxtModule<ModuleOptions>({
 				from: resolver.resolve('./composables/useVm')
 			},
 			{
-				name: 'injectDep',
-				from: resolver.resolve('./decorators/injectDep')
+				name: 'useChildVm',
+				from: resolver.resolve('./composables/useChildVm')
+			},
+			{
+				name: 'inject',
+				as: 'injectDep',
+				from: 'tsyringe'
 			},
 			{
 				name: 'singleton',
