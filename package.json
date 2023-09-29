@@ -1,6 +1,6 @@
 {
   "name": "nuxt-mvvm",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Nuxt package, that add mvvm support.",
   "repository": "https://github.com/Fidden/nuxt-mvvm-di",
   "author": {
