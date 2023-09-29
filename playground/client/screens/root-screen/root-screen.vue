@@ -17,13 +17,7 @@
 import {useVm} from '#imports';
 import {RootScreenVm} from '~/client/screens/root-screen/root-screen.vm';
 
-
 const vm = useVm(RootScreenVm);
-
-if (process.server) {
-	vm.setCounter();
-	vm.logger.log();
-}
 </script>
 
 

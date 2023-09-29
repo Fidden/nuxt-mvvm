@@ -1,4 +1,4 @@
-import {addImports, addPlugin, createResolver, defineNuxtModule} from '@nuxt/kit';
+import {addImports, addPlugin, addTypeTemplate, createResolver, defineNuxtModule} from '@nuxt/kit';
 import {Nuxt} from '@nuxt/schema';
 
 
@@ -40,7 +40,6 @@ export default defineNuxtModule<ModuleOptions>({
 			}
 		]);
 
-
 		nuxt.options.vite.esbuild = {
 			...nuxt.options.vite.esbuild,
 			tsconfigRaw: {
@@ -59,5 +58,10 @@ export default defineNuxtModule<ModuleOptions>({
 		nuxt.hook('modules:done', () => {
 			addPlugin(resolver.resolve('./runtime/plugin'), {append: true});
 		});
+
+		addTypeTemplate({
+			filename:  'lifecycle.d.ts',
+			src: resolver.resolve('./types/lifecycle.d.ts'),
+		})
 	}
 });

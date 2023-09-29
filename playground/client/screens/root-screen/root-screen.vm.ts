@@ -1,16 +1,17 @@
+import {IMountable, ISetupable} from '#build/lifecycle';
+import {injectable, injectDep} from '#imports';
+import {sending} from '~/client/shared/decorators/sending.decorator';
+import {ErrorService} from '~/client/shared/services/error.service';
 import {LoggerService} from '~/client/shared/services/logger.service';
 import {SendingService} from '~/client/shared/services/sending.service';
-import {sending} from '~/client/shared/decorators/sending.decorator';
 import {ISendable} from '~/client/shared/types/sendable';
-import {ErrorService} from '~/client/shared/services/error.service';
-import {injectable, injectDep} from '#imports';
 
 
 type SendingKeys = 'default';
 
 
 @injectable()
-export class RootScreenVm implements ISendable {
+export class RootScreenVm implements ISendable, IMountable, ISetupable {
 	public counter: number;
 
 	public constructor(
@@ -19,6 +20,17 @@ export class RootScreenVm implements ISendable {
 		@injectDep(ErrorService) public readonly error: ErrorService
 	) {
 		this.counter = 0;
+	}
+
+	public onMount() {
+		console.log(`counter is ${this.counter}`);
+	}
+
+	public onSetup() {
+		if (process.server)
+			this.counter = 3000;
+		else
+			this.counter = 500;
 	}
 
 	@sending<SendingKeys>('default')

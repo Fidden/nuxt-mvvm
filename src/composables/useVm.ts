@@ -2,11 +2,18 @@
  @author Fidden
  inspired by WayZer/pinia-class-store
  */
-import {onUnmounted, useNuxtApp} from '#imports';
+import {onMounted, onUnmounted, useNuxtApp} from '#imports';
 import {defineStore, getActivePinia, Store} from 'pinia';
 import {InjectionToken} from '../types/injection-token';
-import {ClassInstanceType, ModuleExt, PiniaStore, VmFlags} from '../types/vm';
+import {ClassInstanceType, ModuleExt, PiniaStore, VmFlags, VmLifeCycle} from '../types/vm';
 
+type StoreDefinition = Store & VmLifeCycle;
+
+function safeCallStoreMethod(store: StoreDefinition, methodName: keyof StoreDefinition) {
+	if (store && store[methodName] && typeof store[methodName] === 'function') {
+		(store[methodName] as CallableFunction)();
+	}
+}
 
 export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = InstanceType<T>>(Module0: T, flags: VmFlags[] = [])
 	: G & Omit<PiniaStore<G>, keyof G> {
@@ -55,8 +62,6 @@ export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = I
 		Module._storeOptions = option;
 	}
 
-	console.log(process.server, Module._storeOptions, isChild);
-
 	/**
 	 * Update data with injected classes on the server side
 	 */
@@ -89,7 +94,19 @@ export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = I
 		state: () => initialState,
 		getters,
 		actions
-	})() as Store;
+	})() as StoreDefinition;
+
+	if (pinia && id && !isChild) {
+		safeCallStoreMethod(store, 'onSetup');
+	}
+
+	onMounted(() => {
+		if (!pinia || !id || isChild) {
+			return;
+		}
+
+		safeCallStoreMethod(store, 'onMount');
+	});
 
 	/**
 	 * Automatic model dispose on view unMount
@@ -99,9 +116,12 @@ export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = I
 			return;
 		}
 
+		safeCallStoreMethod(store, 'onUnmount');
+
 		delete pinia.state.value[id];
 		store.$dispose();
 	});
+
 
 	Object.setPrototypeOf(store, Module.prototype);
 	return store as G;

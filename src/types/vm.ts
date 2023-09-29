@@ -1,4 +1,5 @@
 import {Store} from 'pinia';
+import {IMountable, ISetupable, IUnmountable} from './lifecycle';
 
 export type ClassInstanceType = (new (...args: any) => any);
 
@@ -30,3 +31,5 @@ export type States<T extends Record<string, any>> = Omit<{
 export enum VmFlags {
 	CHILD
 }
+
+export type VmLifeCycle = Partial<IMountable & ISetupable & IUnmountable>;
