@@ -23,7 +23,9 @@ Find and replace all on all files (CMD+SHIFT+F):
 Add as dependeny
 
 ```shell
-pnpm install nuxt-mvvm
+pnpm add nuxt-mvvm
+
+pnpm add tsyringe -D
 ```
 
 ```ts
