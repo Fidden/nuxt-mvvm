@@ -12,41 +12,41 @@ type SendingKeys = 'default';
 
 @injectable()
 export class RootScreenVm implements ISendable, IMountable, ISetupable {
-	public counter: number;
+    public counter: number;
 
-	public constructor(
+    public constructor(
 		@injectDep(LoggerService) public readonly logger: LoggerService,
 		@injectDep(SendingService) public readonly sending: SendingService<SendingKeys>,
 		@injectDep(ErrorService) public readonly error: ErrorService
-	) {
-		this.counter = 0;
-	}
+    ) {
+        this.counter = 0;
+    }
 
-	public onMount() {
-		console.log(`counter is ${this.counter}`);
-	}
+    public onMount() {
+        console.log(`counter is ${this.counter}`);
+    }
 
-	public onSetup() {
-		if (process.server)
-			this.counter = 3000;
-		else
-			this.counter = 500;
-	}
+    public onSetup() {
+        if (process.server)
+            this.counter = 3000;
+        else
+            this.counter = 500;
+    }
 
 	@sending<SendingKeys>('default')
-	public async submit() {
-		return new Promise((resolve) => {
-			setTimeout(() => {
-				resolve('data is sent');
-			}, 3000);
-		});
-	}
+    public async submit() {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve('data is sent');
+            }, 3000);
+        });
+    }
 
 	public setCounter() {
-		this.counter = 2;
+	    this.counter = 2;
 	}
 
 	public increment() {
-		this.counter++;
+	    this.counter++;
 	}
 }

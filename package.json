@@ -1,8 +1,12 @@
 {
-  "name": "nuxt-pinia-di",
+  "name": "nuxt-mvvm",
   "version": "1.0.0",
-  "description": "Nuxt pinia class store with dependency injection",
+  "description": "Nuxt package, that add mvvm support.",
   "repository": "https://github.com/Fidden/nuxt-mvvm-di",
+  "author": {
+    "name": "Alexandr Lisenkov",
+    "url": "https://github.com/fidden"
+  },
   "license": "MIT",
   "type": "module",
   "exports": {

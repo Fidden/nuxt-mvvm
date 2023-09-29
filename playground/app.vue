@@ -1,5 +1,5 @@
 <template>
-	<RootScreen/>
+  <RootScreen />
 </template>
 
 <script setup lang="ts">
