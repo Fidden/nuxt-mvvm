@@ -3,8 +3,5 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
-  },
-  "include": [
-    "types/**/*"
-  ]
+  }
 }
