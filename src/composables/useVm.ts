@@ -55,6 +55,8 @@ export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = I
 		Module._storeOptions = option;
 	}
 
+	console.log(process.server, Module._storeOptions, isChild);
+
 	/**
 	 * Update data with injected classes on the server side
 	 */
