@@ -41,7 +41,7 @@
     "@types/node": "^18.17.3",
     "changelogen": "^0.5.4",
     "eslint": "^8.46.0",
-    "nuxt": "^3.7.0",
+    "nuxt": "^3.7.4",
     "tsyringe": "^4.8.0",
     "vitest": "^0.34.1"
   }

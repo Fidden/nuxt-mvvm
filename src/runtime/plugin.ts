@@ -1,8 +1,8 @@
-import 'reflect-metadata';
 import {defineNuxtPlugin} from '#app';
+import {createPinia, setActivePinia} from 'pinia';
+import 'reflect-metadata';
 import {container} from 'tsyringe';
 import {watch} from 'vue';
-import {setActivePinia, createPinia, StateTree} from 'pinia';
 
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -23,7 +23,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 						/**
 						 * Exclude injected data
 						 */
-						if (piniaState[key][property].constructor.$injected) {
+						if (piniaState[key][property]?.$injected) {
 							continue;
 						}
 
@@ -43,12 +43,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 		 */
 		if (process.server) {
 			nuxtApp.payload.pinia = newState;
-		}
-		/**
-		 * Set builded state from nuxt.payload
-		 */
-		else if (nuxtApp.payload && nuxtApp.payload.pinia && !pinia.state.value) {
-			pinia.state.value = nuxtApp.payload.pinia as Record<string, StateTree>;
+			nuxtApp.payload.state.pinia = nuxtApp.payload.pinia;
 		}
 	}, {deep: true});
 
