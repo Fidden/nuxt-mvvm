@@ -60,6 +60,7 @@ class MyViewModel {
 And just use it
 
 ```vue
+
 <template>
 	<button @click="vm.increment()">
 		count: {{vm.counter}}
@@ -104,6 +105,7 @@ class MyViewModel {
 Use it with service
 
 ```vue
+
 <template>
 	<button @click="vm.counter.increment()">
 		count: {{ vm.counter.value }}
@@ -120,15 +122,14 @@ Use it with service
 
 ### 3. Control lifecycle
 
+You can specify life cycle hook via `IMountable` `ISetupable`, `IUnmountable` interfaces or just use union
+interface `ILifeCycle` that contains all possible life cycle hooks.
+
 ```ts
-class MyViewModel implements IMountable, ISetupable, IUnmountable {
+class MyViewModel implements IMountable, ISetupable, IUnmountable /* or implements ILifeCycle */ {
 	constructor(
 		@injectDep(CounterService) public readonly counter: CounterService
 	) {
-	}
-
-	public increment() {
-		this.value++;
 	}
 
 	public onMount() {

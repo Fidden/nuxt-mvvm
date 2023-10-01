@@ -1,4 +1,3 @@
-import {IMountable, ISetupable} from '#build/lifecycle';
 import {injectable, injectDep} from '#imports';
 import {sending} from '~/client/shared/decorators/sending.decorator';
 import {ErrorService} from '~/client/shared/services/error.service';
@@ -11,7 +10,7 @@ type SendingKeys = 'default';
 
 
 @injectable()
-export class RootScreenVm implements ISendable, IMountable, ISetupable {
+export class RootScreenVm implements ISendable, ILifeCycle {
     public counter: number;
 
     public constructor(
