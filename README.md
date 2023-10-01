@@ -9,7 +9,7 @@ Find and replace all on all files (CMD+SHIFT+F):
 
 <h1 align="center">nuxt-mvvm</h1>
 
-<p align="center">⚡️ MVVM support for nuxt applications</p>
+<p align="center">⚡️ MVVM implementation for nuxt applications</p>
 
 > Intuitive, type safe and flexible MVVM implementation for nuxt based applications
 
