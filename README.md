@@ -11,12 +11,14 @@ Find and replace all on all files (CMD+SHIFT+F):
 
 <p align="center">⚡️ MVVM support for nuxt applications</p>
 
+> Intuitive, type safe and flexible MVVM implementation for nuxt based applications
+
 ## Features
 
-- Nuxt3 ready
-- Full ssr support
-- ViewModels based on pinia stores
-- Dependency injection
+- ⛰️ Nuxt3 ready
+- ⚙️ SSR support
+- 💉 Dependency injection
+- 📦 Extremely light
 
 ## Setup
 
@@ -30,6 +32,7 @@ pnpm add tsyringe -D
 
 ```ts
 import {defineNuxtConfig} from 'nuxt'
+
 
 export default defineNuxtConfig({
 	modules: ['nuxt-mvvm']
@@ -57,15 +60,15 @@ class MyViewModel {
 And just use it
 
 ```vue
-
 <template>
-	<button>
+	<button @click="vm.increment()">
 		count: {{vm.counter}}
 	</button>
 </template>
 
 <script setup lang="ts">
 	import {useVm} from '#imports';
+
 
 	const vm = useVm(MyViewModel);
 </script>
@@ -78,11 +81,11 @@ Create service
 ```ts
 class CounterService {
 	constructor() {
-		this.counter = 0;
+		this.value = 0;
 	}
 
 	public increment() {
-		this.counter++;
+		this.value++;
 	}
 }
 ```
@@ -94,11 +97,6 @@ class MyViewModel {
 	constructor(
 		@injectDep(CounterService) public readonly counter: CounterService
 	) {
-		this.value = 0;
-	}
-
-	public increment() {
-		this.value++;
 	}
 }
 ```
@@ -106,15 +104,15 @@ class MyViewModel {
 Use it with service
 
 ```vue
-
 <template>
 	<button @click="vm.counter.increment()">
-		count: {{vm.counter.value}}
+		count: {{ vm.counter.value }}
 	</button>
 </template>
 
 <script setup lang="ts">
 	import {useVm} from '#imports';
+
 
 	const vm = useVm(MyViewModel);
 </script>
@@ -127,7 +125,6 @@ class MyViewModel implements IMountable, ISetupable, IUnmountable {
 	constructor(
 		@injectDep(CounterService) public readonly counter: CounterService
 	) {
-		this.value = 0;
 	}
 
 	public increment() {
@@ -135,27 +132,26 @@ class MyViewModel implements IMountable, ISetupable, IUnmountable {
 	}
 
 	public onMount() {
-		// equals onMounted()
+		// calls on view mounting
 	}
 
 	public onSetup() {
-		// calls on setup()
+		// calls on view setup
 	}
 
 	public onUnmount() {
-		// equals onUnmounted()
+		// calls on view unmounting
 	}
 }
 ```
 
 ### Decorators
 
-1. `injectable` - https://github.com/microsoft/tsyringe#injectable
-2. `singleton` - https://github.com/microsoft/tsyringe#singleton
-3. `injectDep` - https://github.com/microsoft/tsyringe#inject
-
+1. [injectable](https://github.com/microsoft/tsyringe#injectable)
+2. [singleton](https://github.com/microsoft/tsyringe#singleton)
+3. [injectDep](https://github.com/microsoft/tsyringe#inject)
 
 ### Composables
 
 1. `useVm` - create view-model instance
-2. `useChildVm` - create child of some view-model
+2. `useChildVm` - use instance of already created view-model
