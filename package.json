@@ -2,12 +2,20 @@
   "name": "@fidden/nuxt-mvvm",
   "version": "1.0.5",
   "description": "Intuitive, type safe and flexible MVVM implementation for nuxt based applications",
-  "repository": "https://github.com/Fidden/nuxt-mvvm.git",
+  "repository": {
+    "url": "https://github.com/Fidden/nuxt-mvvm.git",
+    "type": "git"
+  },
   "author": {
     "name": "Alexandr Lisenkov",
     "url": "https://github.com/fidden"
   },
-  "keywords": ["nuxt", "mvvm", "dependency-injection", "mvvm-architecture"],
+  "keywords": [
+    "nuxt",
+    "mvvm",
+    "dependency-injection",
+    "mvvm-architecture"
+  ],
   "license": "MIT",
   "type": "module",
   "exports": {
