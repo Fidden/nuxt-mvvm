@@ -1,4 +1,4 @@
-import {injectable, injectDep} from '#imports';
+import {injectDep, ScreenVm} from '#imports';
 import {sending} from '~/client/shared/decorators/sending.decorator';
 import {ErrorService} from '~/client/shared/services/error.service';
 import {LoggerService} from '~/client/shared/services/logger.service';
@@ -9,14 +9,14 @@ import {ISendable} from '~/client/shared/types/sendable';
 type SendingKeys = 'default';
 
 
-@injectable()
+@ScreenVm()
 export class RootScreenVm implements ISendable, ILifeCycle {
     public counter: number;
 
     public constructor(
-		@injectDep(LoggerService) public readonly logger: LoggerService,
-		@injectDep(SendingService) public readonly sending: SendingService<SendingKeys>,
-		@injectDep(ErrorService) public readonly error: ErrorService
+        @injectDep(LoggerService) public readonly logger: LoggerService,
+        @injectDep(SendingService) public readonly sending: SendingService<SendingKeys>,
+        @injectDep(ErrorService) public readonly error: ErrorService
     ) {
         this.counter = 0;
     }
@@ -32,7 +32,7 @@ export class RootScreenVm implements ISendable, ILifeCycle {
             this.counter = 500;
     }
 
-	@sending<SendingKeys>('default')
+    @sending<SendingKeys>('default')
     public async submit() {
         return new Promise((resolve) => {
             setTimeout(() => {
@@ -41,11 +41,11 @@ export class RootScreenVm implements ISendable, ILifeCycle {
         });
     }
 
-	public setCounter() {
-	    this.counter = 2;
-	}
+    public setCounter() {
+        this.counter = 2;
+    }
 
-	public increment() {
-	    this.counter++;
-	}
+    public increment() {
+        this.counter++;
+    }
 }

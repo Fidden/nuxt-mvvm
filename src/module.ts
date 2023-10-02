@@ -24,6 +24,18 @@ export default defineNuxtModule({
                 from: resolver.resolve('./runtime/composables/useChildVm')
             },
             {
+                name: 'ViewModel',
+                from: resolver.resolve('./runtime/decorators/view-model')
+            },
+            {
+                name: 'ScreenVm',
+                from: resolver.resolve('./runtime/decorators/screen')
+            },
+            {
+                name: 'ComponentVm',
+                from: resolver.resolve('./runtime/decorators/component')
+            },
+            {
                 name: 'inject',
                 as: 'injectDep',
                 from: 'tsyringe'
@@ -54,6 +66,6 @@ export default defineNuxtModule({
             addPlugin(resolver.resolve('./runtime/plugin'), {append: true});
         });
 
-        nuxt.options.build.transpile.push(resolver.resolve('./runtime'))
+        nuxt.options.build.transpile.push(resolver.resolve('./runtime'));
     }
 });

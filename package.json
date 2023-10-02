@@ -41,6 +41,7 @@
     "test:watch": "vitest watch"
   },
   "dependencies": {
+    "@nuxt/devtools-ui-kit": "1.0.0-beta.0",
     "@nuxt/kit": "^3.7.0",
     "pinia": "^2.1.6",
     "reflect-metadata": "^0.1.13"
