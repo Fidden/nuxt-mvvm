@@ -1,13 +1,11 @@
 import {addImports, addPlugin, createResolver, defineNuxtModule} from '@nuxt/kit';
 import {Nuxt} from '@nuxt/schema';
 
-
-// Module options TypeScript interface definition
-export interface ModuleOptions {
-}
-
-
-export default defineNuxtModule<ModuleOptions>({
+/**
+ @author Fidden
+  inspired by WayZer/pinia-class-store
+ */
+export default defineNuxtModule({
     meta: {
         name: 'nuxt-mvvm',
         configKey: 'mvvm'

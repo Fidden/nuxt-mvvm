@@ -1,16 +1,69 @@
+import {ComponentPublicInstance, DebuggerEvent} from 'vue';
+
 export interface IMountable {
-	onMount: () => Promise<void> | void;
+    onMounted: () => Promise<void> | void;
 }
 
+export interface IBeforeMountable {
+    onBeforeMounted: () => Promise<void> | void;
+}
 
 export interface ISetupable {
-	onSetup: () => Promise<void> | void;
+    onSetup: () => Promise<void> | void;
 }
 
 
 export interface IUnmountable {
-	onUnmount: () => Promise<void> | void;
+    onUnmounted: () => Promise<void> | void;
 }
 
+export interface IRenderTrackable {
+    onRenderTracked: (e: DebuggerEvent) => void;
+}
 
-export type ILifeCycle = Partial<IMountable & ISetupable & IUnmountable>;
+export interface IRenderTriggerable {
+    onRenderTriggered: (e: DebuggerEvent) => void;
+}
+
+export interface IBeforeUnmountable {
+    onBeforeUnmounted: () => Promise<void> | void;
+}
+
+export interface ICaptureError {
+    onErrorCaptured: (
+        err: unknown,
+        instance: ComponentPublicInstance | null,
+        info: string
+    ) => void;
+}
+
+export interface IUpdatable {
+    onUpdated: () => void;
+}
+
+export interface IActivatable {
+    onActivated: () => void;
+}
+
+export interface IDeactivatable {
+    onDeactivated: () => void;
+}
+
+export interface IServicePrefetchable {
+    onServerPrefetch: () => Promise<any>;
+}
+
+export type ILifeCycle = Partial<
+    IMountable &
+    IBeforeMountable &
+    ISetupable &
+    IUnmountable &
+    IBeforeUnmountable &
+    ICaptureError &
+    IUpdatable &
+    IRenderTrackable &
+    IRenderTriggerable &
+    IDeactivatable &
+    IActivatable &
+    IServicePrefetchable
+>;
