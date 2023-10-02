@@ -1,3 +1,4 @@
+import {NavigationGuard} from '#vue-router';
 import {ComponentPublicInstance, DebuggerEvent} from 'vue';
 
 export interface IMountable {
@@ -11,7 +12,6 @@ export interface IBeforeMountable {
 export interface ISetupable {
     onSetup: () => Promise<void> | void;
 }
-
 
 export interface IUnmountable {
     onUnmounted: () => Promise<void> | void;
@@ -51,6 +51,11 @@ export interface IDeactivatable {
 
 export interface IServicePrefetchable {
     onServerPrefetch: () => Promise<any>;
+}
+
+export interface IRouterable {
+    onBeforeRouteLeave: (guard: NavigationGuard) => void;
+    onBeforeRouteUpdate: (guard: NavigationGuard) => void;
 }
 
 export type ILifeCycle = Partial<

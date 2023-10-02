@@ -6,14 +6,20 @@ import {
     onUnmounted,
     useNuxtApp,
     onUpdated,
-    onRenderTracked, onRenderTriggered, onActivated, onDeactivated, onServerPrefetch
+    onRenderTracked,
+    onRenderTriggered,
+    onActivated,
+    onDeactivated,
+    onServerPrefetch,
+    onBeforeRouteLeave,
+    onBeforeRouteUpdate
 } from '#imports';
 import {defineStore, getActivePinia, Store} from 'pinia';
-import {ILifeCycle} from '../types';
+import {ILifeCycle, IRouterable} from '../types';
 import {InjectionToken} from '../types/injection-token';
 import {ClassInstanceType, ModuleExt, PiniaStore, VmFlags} from '../types/vm';
 
-type StoreDefinition = Store & ILifeCycle;
+type StoreDefinition = Store & ILifeCycle & IRouterable;
 
 export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = InstanceType<T>>(Module0: T, flags: VmFlags[] = [])
     : G & Omit<PiniaStore<G>, keyof G> {
@@ -162,6 +168,14 @@ export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = I
         {
             function: onServerPrefetch,
             callback: () => safeCallStoreMethod('onServerPrefetch')
+        },
+        {
+            function: onBeforeRouteLeave,
+            callback: () => safeCallStoreMethod('onBeforeRouteLeave')
+        },
+        {
+            function: onBeforeRouteUpdate,
+            callback: () => safeCallStoreMethod('onBeforeRouteUpdate')
         }
     ];
 
