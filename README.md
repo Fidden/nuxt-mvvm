@@ -35,7 +35,7 @@ import {defineNuxtConfig} from 'nuxt'
 
 
 export default defineNuxtConfig({
-	modules: ['nuxt-mvvm']
+    modules: ['nuxt-mvvm']
 })
 ```
 
@@ -47,13 +47,13 @@ Create view-model
 
 ```ts
 class MyViewModel {
-	constructor() {
-		this.counter = 0;
-	}
+    constructor() {
+        this.counter = 0;
+    }
 
-	public increment() {
-		this.counter++;
-	}
+    public increment() {
+        this.counter++;
+    }
 }
 ```
 
@@ -81,13 +81,13 @@ Create service
 
 ```ts
 class CounterService {
-	constructor() {
-		this.value = 0;
-	}
+    constructor() {
+        this.value = 0;
+    }
 
-	public increment() {
-		this.value++;
-	}
+    public increment() {
+        this.value++;
+    }
 }
 ```
 
@@ -95,10 +95,10 @@ Inject service
 
 ```ts
 class MyViewModel {
-	constructor(
-		@injectDep(CounterService) public readonly counter: CounterService
-	) {
-	}
+    constructor(
+        @injectDep(CounterService) public readonly counter: CounterService
+    ) {
+    }
 }
 ```
 
@@ -127,24 +127,38 @@ interface `ILifeCycle` that contains all possible life cycle hooks.
 
 ```ts
 class MyViewModel implements IMountable, ISetupable, IUnmountable /* or implements ILifeCycle */ {
-	constructor(
-		@injectDep(CounterService) public readonly counter: CounterService
-	) {
-	}
+    public onMount() {
+        // calls on view mounting
+    }
 
-	public onMount() {
-		// calls on view mounting
-	}
+    public onSetup() {
+        // calls on view setup
+    }
 
-	public onSetup() {
-		// calls on view setup
-	}
-
-	public onUnmount() {
-		// calls on view unmounting
-	}
+    public onUnmount() {
+        // calls on view unmounting
+    }
 }
 ```
+
+Life cycle interfaces:
+
+- `IMountable`
+- `IBeforeMountable`
+- `ISetupable`
+- `IUnmountable`
+- `IBeforeUnmountable`
+- `ICaptureError`
+- `IUpdatable`
+- `IRenderTrackable`
+- `IRenderTriggerable`
+- `IDeactivatable`
+- `IActivatable`
+- `IServicePrefetchable`
+
+Router interfaces:
+
+- `IRouterable`
 
 ### Decorators
 
