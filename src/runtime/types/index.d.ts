@@ -54,8 +54,8 @@ export interface IServicePrefetchable {
 }
 
 export interface IRouterable {
-    onBeforeRouteLeave: (guard: NavigationGuard) => void;
-    onBeforeRouteUpdate: (guard: NavigationGuard) => void;
+    onBeforeRouteLeave?: (guard: NavigationGuard) => void;
+    onBeforeRouteUpdate?: (guard: NavigationGuard) => void;
 }
 
 export type ILifeCycle = Partial<
