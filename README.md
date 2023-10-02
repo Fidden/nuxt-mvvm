@@ -165,6 +165,8 @@ Router interfaces:
 1. [injectable](https://github.com/microsoft/tsyringe#injectable)
 2. [singleton](https://github.com/microsoft/tsyringe#singleton)
 3. [injectDep](https://github.com/microsoft/tsyringe#inject)
+4. ScreenVm - marks class as screen view-model
+5. ComponentVm - marks class as component view-model
 
 ### Composables
 
