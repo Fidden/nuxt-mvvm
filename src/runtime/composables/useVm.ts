@@ -40,11 +40,15 @@ export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = I
             store && store[methodName] &&
             typeof store[methodName] === 'function'
         ) {
-            (store[methodName] as CallableFunction)();
+            return (store[methodName] as CallableFunction)();
         }
     };
 
-    const markAsInjected = (key) => {
+    const markAsInjected = (key: string) => {
+        if (!Module?._storeOptions) {
+            return;
+        }
+
         Object.defineProperty(Module._storeOptions.initialState[key], '$injected', {
             writable: false,
             enumerable: false,
@@ -130,15 +134,15 @@ export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = I
     const hooks = [
         {
             function: onMounted,
-            callback: () => {
-                safeCallStoreMethod('onMounted');
-                delete pinia!.state!.value[id];
-                store.$dispose();
-            }
+            callback: safeCallStoreMethod('onMounted')
         },
         {
             function: onUnmounted,
-            callback: () => safeCallStoreMethod('onUnmounted')
+            callback: () => {
+                safeCallStoreMethod('onUnmounted');
+                delete pinia!.state!.value[id];
+                store.$dispose();
+            }
         },
         {
             function: onBeforeMount,
