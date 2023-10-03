@@ -66,6 +66,10 @@ export default defineNuxtModule({
             addPlugin(resolver.resolve('./runtime/plugin'), {append: true});
         });
 
+        nuxt.hook('prepare:types', ({references}) => {
+            references.push({types: resolver.resolve('./runtime/types')});
+        });
+
         nuxt.options.build.transpile.push(resolver.resolve('./runtime'));
     }
 });

@@ -1,16 +1,16 @@
 <template>
-  <h1>Nuxt + Pinia + Di = ❤️</h1>
-  <div id="buttons">
-    <button @click="vm.submit()">
-      Is sending: {{ vm.sending.get('default') }}
-    </button>
-    <button @click="vm.logger.log()">
-      Log message
-    </button>
-    <button @click="vm.increment()">
-      Count is: {{ vm.counter }}
-    </button>
-  </div>
+    <h1>Nuxt + Pinia + Di = ❤️</h1>
+    <div id="buttons">
+        <button @click="vm.submit()">
+            Is sending: {{ vm.sending.get('default') }}
+        </button>
+        <button @click="vm.logger.log()">
+            Log message
+        </button>
+        <button @click="vm.increment()">
+            Count is: {{ vm.counter }}
+        </button>
+    </div>
 </template>
 
 <script setup lang="ts">

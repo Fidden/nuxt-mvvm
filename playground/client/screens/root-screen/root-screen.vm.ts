@@ -1,8 +1,10 @@
 import {injectDep, ScreenVm} from '#imports';
+import {ILifeCycle} from '#module/runtime/types';
 import {sending} from '~/client/shared/decorators/sending.decorator';
 import {ErrorService} from '~/client/shared/services/error.service';
 import {LoggerService} from '~/client/shared/services/logger.service';
 import {SendingService} from '~/client/shared/services/sending.service';
+import {BaseVm} from '~/client/shared/types/abstract/base.vm';
 import {ISendable} from '~/client/shared/types/sendable';
 
 
@@ -10,7 +12,7 @@ type SendingKeys = 'default';
 
 
 @ScreenVm()
-export class RootScreenVm implements ISendable, ILifeCycle {
+export class RootScreenVm extends BaseVm implements ISendable, ILifeCycle {
     public counter: number;
 
     public constructor(
@@ -18,10 +20,11 @@ export class RootScreenVm implements ISendable, ILifeCycle {
         @injectDep(SendingService) public readonly sending: SendingService<SendingKeys>,
         @injectDep(ErrorService) public readonly error: ErrorService
     ) {
+        super();
         this.counter = 0;
     }
 
-    public onMount() {
+    public onMounted() {
         console.log(`counter is ${this.counter}`);
     }
 
@@ -30,6 +33,9 @@ export class RootScreenVm implements ISendable, ILifeCycle {
             this.counter = 3000;
         else
             this.counter = 500;
+
+        console.log('route:', this.route);
+        console.log('router:', this.router);
     }
 
     @sending<SendingKeys>('default')

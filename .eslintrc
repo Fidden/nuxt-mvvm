@@ -8,6 +8,10 @@
       "error",
       4
     ],
-    "no-prototype-builtins": "off"
+    "no-prototype-builtins": "off",
+    "vue/html-indent": [
+      "error",
+      4
+    ]
   }
 }

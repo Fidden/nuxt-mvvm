@@ -2,7 +2,7 @@ import {injectable, singleton} from 'tsyringe';
 import {constructor} from 'tsyringe/dist/typings/types';
 
 interface IViewModelMeta {
-    type: 'singleton' | 'injectable';
+    type?: 'singleton' | 'injectable';
 }
 
 /**
@@ -14,8 +14,8 @@ interface IViewModelMeta {
  * @param {IViewModelMeta} meta - The metadata for the ViewModel.
  * @return {Function} decorator - The ViewModel decorator function.
  */
-export function ViewModel(meta: IViewModelMeta) {
-    const decorateFunc = meta.type === 'singleton' ? singleton : injectable;
+export function ViewModel(meta?: IViewModelMeta) {
+    const decorateFunc = meta?.type === 'singleton' ? singleton : injectable;
 
     return function <T>(ctor: constructor<T>) {
         return decorateFunc()(ctor);

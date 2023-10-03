@@ -1,26 +1,28 @@
 import {
+    onActivated,
     onBeforeMount,
+    onBeforeRouteLeave,
+    onBeforeRouteUpdate,
     onBeforeUnmount,
+    onDeactivated,
     onErrorCaptured,
     onMounted,
-    onUnmounted,
-    useNuxtApp,
-    onUpdated,
     onRenderTracked,
     onRenderTriggered,
-    onActivated,
-    onDeactivated,
     onServerPrefetch,
-    onBeforeRouteLeave,
-    onBeforeRouteUpdate
+    onUnmounted,
+    onUpdated,
+    useNuxtApp,
+    useRoute,
+    useRouter
 } from '#imports';
+import {InjectionToken} from '#src/types/injection-token';
+import {ModuleExt} from '#src/types/module-ext';
 import {defineStore, getActivePinia, Store} from 'pinia';
 import {ILifeCycle, IRouterable} from '../types';
-import {InjectionToken} from '#src/types/injection-token';
-import {ModuleExt} from '#src/types/module-ext'
-import {ClassInstanceType, PiniaStore, VmFlags} from '../types/vm';
+import {ClassInstanceType, PiniaStore, BaseViewModel, VmFlags} from '../types/vm';
 
-type StoreDefinition = Store & ILifeCycle & IRouterable;
+type StoreDefinition = Store & ILifeCycle & IRouterable & BaseViewModel;
 
 export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = InstanceType<T>>(Module0: T, flags: VmFlags[] = [])
     : G & Omit<PiniaStore<G>, keyof G> {
@@ -41,6 +43,14 @@ export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = I
         ) {
             (store[methodName] as CallableFunction)();
         }
+    };
+
+    const markAsInjected = (key) => {
+        Object.defineProperty(Module._storeOptions.initialState[key], '$injected', {
+            writable: false,
+            enumerable: false,
+            value: true
+        });
     };
 
     /*
@@ -76,6 +86,8 @@ export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = I
             }
         }
 
+        option.initialState['route'] = useRoute();
+        option.initialState['router'] = useRouter();
         Module._storeOptions = option;
     }
 
@@ -89,12 +101,11 @@ export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = I
             }
 
             Module._storeOptions.initialState[key] = instance[key];
-            Object.defineProperty(Module._storeOptions.initialState[key], '$injected', {
-                writable: false,
-                enumerable: false,
-                value: true
-            });
+            markAsInjected(key);
         }
+
+        markAsInjected('route');
+        markAsInjected('router');
     }
 
     if (!Module._storeOptions) {
@@ -113,7 +124,7 @@ export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = I
         actions
     })() as StoreDefinition;
 
-    if (pinia && id && !isChild) {
+    if (isValidForLifeCycle) {
         safeCallStoreMethod('onSetup');
     }
 

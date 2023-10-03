@@ -1,4 +1,5 @@
 import {Store} from 'pinia';
+import {RouteLocationNormalizedLoaded, Router} from 'vue-router';
 
 export type ClassInstanceType = (new (...args: any) => any);
 
@@ -24,3 +25,7 @@ export enum VmFlags {
     CHILD
 }
 
+export abstract class BaseViewModel {
+    declare protected route: RouteLocationNormalizedLoaded;
+    declare protected router: Router;
+}
