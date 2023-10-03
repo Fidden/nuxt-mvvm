@@ -4,13 +4,6 @@ export type ClassInstanceType = (new (...args: any) => any);
 
 export type PiniaStore<G extends Record<string, any>> = Store<string, States<G>, Getters<G>, Actions<G>>
 
-export interface ModuleExt {
-    _storeOptions?: {
-        initialState: NonNullable<any>,
-        getters: NonNullable<unknown>,
-        actions: NonNullable<unknown>
-    };
-}
 
 // magic, see https://github.com/Microsoft/TypeScript/issues/27024
 export type Magic<X> = (<T>() => T extends X ? 1 : 2)
@@ -30,3 +23,4 @@ export type States<T extends Record<string, any>> = Omit<{
 export enum VmFlags {
     CHILD
 }
+

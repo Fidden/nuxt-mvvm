@@ -1,6 +1,6 @@
 {
   "name": "nuxt-mvvm",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Intuitive, type safe and flexible MVVM implementation for nuxt based applications",
   "repository": {
     "url": "https://github.com/Fidden/nuxt-mvvm.git",
@@ -35,13 +35,12 @@
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
-    "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
+    "release": "pnpm lint && pnpm test && pnpm prepack && changelogen --release && pnpm publish && git push --follow-tags",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest watch"
   },
   "dependencies": {
-    "@nuxt/devtools-ui-kit": "1.0.0-beta.0",
     "@nuxt/kit": "^3.7.0",
     "pinia": "^2.1.6",
     "reflect-metadata": "^0.1.13"

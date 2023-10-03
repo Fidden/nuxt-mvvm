@@ -16,8 +16,9 @@ import {
 } from '#imports';
 import {defineStore, getActivePinia, Store} from 'pinia';
 import {ILifeCycle, IRouterable} from '../types';
-import {InjectionToken} from '../types/injection-token';
-import {ClassInstanceType, ModuleExt, PiniaStore, VmFlags} from '../types/vm';
+import {InjectionToken} from '#src/types/injection-token';
+import {ModuleExt} from '#src/types/module-ext'
+import {ClassInstanceType, PiniaStore, VmFlags} from '../types/vm';
 
 type StoreDefinition = Store & ILifeCycle & IRouterable;
 
