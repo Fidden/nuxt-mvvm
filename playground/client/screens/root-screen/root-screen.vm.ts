@@ -1,5 +1,4 @@
-import {injectDep, ScreenVm} from '#imports';
-import {ILifeCycle} from '#module/runtime/types';
+import {injectDep, ILifeCycle, ScreenVm} from '#imports';
 import {sending} from '~/client/shared/decorators/sending.decorator';
 import {ErrorService} from '~/client/shared/services/error.service';
 import {LoggerService} from '~/client/shared/services/logger.service';

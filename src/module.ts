@@ -1,4 +1,4 @@
-import {addImports, addPlugin, createResolver, defineNuxtModule} from '@nuxt/kit';
+import {addImports, addImportsDir, addPlugin, createResolver, defineNuxtModule} from '@nuxt/kit';
 import {Nuxt} from '@nuxt/schema';
 
 /**
@@ -14,26 +14,16 @@ export default defineNuxtModule({
     setup(options, nuxt: Nuxt) {
         const resolver = createResolver(import.meta.url);
 
+        addImportsDir([
+            resolver.resolve('./runtime/composables'),
+            resolver.resolve('./runtime/decorators'),
+            resolver.resolve('./runtime/types')
+        ]);
+
         addImports([
             {
-                name: 'useVm',
-                from: resolver.resolve('./runtime/composables/useVm')
-            },
-            {
-                name: 'useChildVm',
-                from: resolver.resolve('./runtime/composables/useChildVm')
-            },
-            {
-                name: 'ViewModel',
-                from: resolver.resolve('./runtime/decorators/view-model')
-            },
-            {
-                name: 'ScreenVm',
-                from: resolver.resolve('./runtime/decorators/screen')
-            },
-            {
-                name: 'ComponentVm',
-                from: resolver.resolve('./runtime/decorators/component')
+                name: 'BaseViewModel',
+                from: resolver.resolve('./runtime/types')
             },
             {
                 name: 'inject',
@@ -64,10 +54,6 @@ export default defineNuxtModule({
 
         nuxt.hook('modules:done', () => {
             addPlugin(resolver.resolve('./runtime/plugin'), {append: true});
-        });
-
-        nuxt.hook('prepare:types', ({references}) => {
-            references.push({types: resolver.resolve('./runtime/types')});
         });
 
         nuxt.options.build.transpile.push(resolver.resolve('./runtime'));

@@ -1,5 +1,6 @@
 import {NavigationGuard} from '#vue-router';
 import {ComponentPublicInstance, DebuggerEvent} from 'vue';
+import {RouteLocationNormalizedLoaded, Router} from 'vue-router';
 
 export interface IMountable {
     onMounted: () => Promise<void> | void;
@@ -72,3 +73,12 @@ export type ILifeCycle = Partial<
     IActivatable &
     IServicePrefetchable
 >;
+
+export enum VmFlags {
+    CHILD
+}
+
+export abstract class BaseViewModel {
+    declare protected route: RouteLocationNormalizedLoaded;
+    declare protected router: Router;
+}

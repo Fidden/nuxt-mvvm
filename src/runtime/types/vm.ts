@@ -1,5 +1,4 @@
 import {Store} from 'pinia';
-import {RouteLocationNormalizedLoaded, Router} from 'vue-router';
 
 export type ClassInstanceType = (new (...args: any) => any);
 
@@ -20,12 +19,3 @@ export type Getters<T extends Record<string, any>> = {
 export type States<T extends Record<string, any>> = Omit<{
     [P in keyof T as Magic<Pick<T, P>> extends Magic<Readonly<Pick<T, P>>> ? never : P]: T[P];
 }, keyof Actions<T>>;
-
-export enum VmFlags {
-    CHILD
-}
-
-export abstract class BaseViewModel {
-    declare protected route: RouteLocationNormalizedLoaded;
-    declare protected router: Router;
-}

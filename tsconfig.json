@@ -3,11 +3,5 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "baseUrl": "./",
-    "paths": {
-      "#src/*": [
-        "src/*"
-      ]
-    }
   }
 }

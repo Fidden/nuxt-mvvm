@@ -1,17 +1,3 @@
 {
-  "compilerOptions": {
-    "baseUrl": "./",
-    "paths": {
-      "#module/*": [
-        "../src/*"
-      ],
-      "~/*": [
-        "./*"
-      ],
-      "#imports": [
-        "./.nuxt/imports"
-      ]
-    }
-  },
   "extends": "./.nuxt/tsconfig.json"
 }
