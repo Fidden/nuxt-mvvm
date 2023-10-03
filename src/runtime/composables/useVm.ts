@@ -40,8 +40,10 @@ export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = I
             store && store[methodName] &&
             typeof store[methodName] === 'function'
         ) {
-            return (store[methodName] as CallableFunction)();
+            return store[methodName] as CallableFunction;
         }
+
+        return new Function();
     };
 
     const markAsInjected = (key: string) => {
@@ -138,59 +140,59 @@ export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = I
         },
         {
             function: onUnmounted,
-            callback: () => {
-                safeCallStoreMethod('onUnmounted');
+            callback: (...args: unknown[]) => {
+                safeCallStoreMethod('onUnmounted').apply(store, args);
                 delete pinia!.state!.value[id];
                 store.$dispose();
             }
         },
         {
             function: onBeforeMount,
-            callback: () => safeCallStoreMethod('onBeforeMounted')
+            callback: safeCallStoreMethod('onBeforeMounted')
         },
         {
             function: onBeforeUnmount,
-            callback: () => safeCallStoreMethod('onBeforeUnmounted')
+            callback: safeCallStoreMethod('onBeforeUnmounted')
         },
         {
             function: onErrorCaptured,
-            callback: () => safeCallStoreMethod('onErrorCaptured')
+            callback: safeCallStoreMethod('onErrorCaptured')
         },
         {
             function: onErrorCaptured,
-            callback: () => safeCallStoreMethod('onErrorCaptured')
+            callback: safeCallStoreMethod('onErrorCaptured')
         },
         {
             function: onUpdated,
-            callback: () => safeCallStoreMethod('onUpdated')
+            callback: safeCallStoreMethod('onUpdated')
         },
         {
             function: onRenderTracked,
-            callback: () => safeCallStoreMethod('onRenderTracked')
+            callback: safeCallStoreMethod('onRenderTracked')
         },
         {
             function: onRenderTriggered,
-            callback: () => safeCallStoreMethod('onRenderTriggered')
+            callback: safeCallStoreMethod('onRenderTriggered')
         },
         {
             function: onActivated,
-            callback: () => safeCallStoreMethod('onActivated')
+            callback: safeCallStoreMethod('onActivated')
         },
         {
             function: onDeactivated,
-            callback: () => safeCallStoreMethod('onDeactivated')
+            callback: safeCallStoreMethod('onDeactivated')
         },
         {
             function: onServerPrefetch,
-            callback: () => safeCallStoreMethod('onServerPrefetch')
+            callback: safeCallStoreMethod('onServerPrefetch')
         },
         {
             function: onBeforeRouteLeave,
-            callback: () => safeCallStoreMethod('onBeforeRouteLeave')
+            callback: safeCallStoreMethod('onBeforeRouteLeave')
         },
         {
             function: onBeforeRouteUpdate,
-            callback: () => safeCallStoreMethod('onBeforeRouteUpdate')
+            callback: safeCallStoreMethod('onBeforeRouteUpdate')
         }
     ];
 
@@ -199,7 +201,7 @@ export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = I
             continue;
         }
 
-        hook.function(hook.callback);
+        hook.function((...args: unknown[]) => hook.callback.apply(store, args));
     }
 
     Object.setPrototypeOf(store, Module.prototype);
