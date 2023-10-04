@@ -1,5 +1,5 @@
 <template>
-    <h1>Nuxt + Pinia + Di = ❤️</h1>
+    <h1>Nuxt + MVVM + Di = ❤️</h1>
     <div id="buttons">
         <button @click="vm.submit()">
             Is sending: {{ vm.sending.get('default') }}
