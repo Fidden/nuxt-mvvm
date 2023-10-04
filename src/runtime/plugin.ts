@@ -45,7 +45,7 @@ export default defineNuxtPlugin((nuxtApp) => {
             nuxtApp.payload.pinia = newState;
             nuxtApp.payload.state.pinia = nuxtApp.payload.pinia;
         }
-    }, {deep: true});
+    }, {deep: true, immediate: true});
 
     return {
         provide: {

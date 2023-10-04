@@ -16,8 +16,8 @@ import {
     useRoute,
     useRouter
 } from '#imports';
-import {InjectionToken} from '#src/types/injection-token';
-import {ModuleExt} from '#src/types/module-ext';
+import {InjectionToken} from '../../types/injection-token';
+import {ModuleExt} from '../../types/module-ext';
 import {defineStore, getActivePinia, Store} from 'pinia';
 import {BaseViewModel, ClassInstanceType, ILifeCycle, IRouterable, PiniaStore, VmFlags} from '../types';
 
@@ -196,12 +196,10 @@ export function useVm<T extends ClassInstanceType, G extends InstanceType<T> = I
         }
     ];
 
-    for (const hook of hooks) {
-        if (!isValidForLifeCycle) {
-            continue;
+    if (isValidForLifeCycle) {
+        for (const hook of hooks) {
+            hook.function((...args: unknown[]) => hook.callback.apply(store, args));
         }
-
-        hook.function((...args: unknown[]) => hook.callback.apply(store, args));
     }
 
     Object.setPrototypeOf(store, Module.prototype);

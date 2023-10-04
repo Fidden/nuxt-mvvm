@@ -1,3 +1,4 @@
+import {useRoute, useRouter} from '#app';
 import {NavigationGuard} from '#vue-router';
 import {Store} from 'pinia';
 import {ComponentPublicInstance, DebuggerEvent} from 'vue';
@@ -80,8 +81,13 @@ export enum VmFlags {
 }
 
 export abstract class BaseViewModel {
-    declare protected route: RouteLocationNormalizedLoaded;
-    declare protected router: Router;
+    protected route: RouteLocationNormalizedLoaded;
+    protected router: Router;
+
+    protected constructor() {
+        this.router = useRouter();
+        this.route = useRoute();
+    }
 }
 
 export type ClassInstanceType = (new (...args: any) => any);
