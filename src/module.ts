@@ -17,7 +17,8 @@ export default defineNuxtModule({
         addImportsDir([
             resolver.resolve('./runtime/composables'),
             resolver.resolve('./runtime/decorators'),
-            resolver.resolve('./runtime/types')
+            resolver.resolve('./runtime/types'),
+            resolver.resolve('./runtime/factories'),
         ]);
 
         addImports([
