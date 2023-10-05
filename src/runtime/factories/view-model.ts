@@ -4,8 +4,6 @@ import {
     IRouterable,
     onActivated,
     onBeforeMount,
-    onBeforeRouteLeave,
-    onBeforeRouteUpdate,
     onBeforeUnmount,
     onDeactivated,
     onErrorCaptured,
@@ -18,11 +16,10 @@ import {
     useNuxtApp,
     useRouter
 } from '#imports';
+import {defineStore, getActivePinia, Pinia, Store} from 'pinia';
 import {BaseViewModel, ClassInstanceType, VmFlags} from '../../runtime/types';
 import {InjectionToken} from '../../types/injection-token';
 import {ModuleExt} from '../../types/module-ext';
-import {defineStore, getActivePinia, Pinia, Store} from 'pinia';
-
 
 type StoreDefinition = Store & ILifeCycle & IRouterable & BaseViewModel;
 
@@ -169,88 +166,67 @@ export class ViewModelFactory<T extends ClassInstanceType, G extends InstanceTyp
     }
 
     private callComponentHooks() {
-        if (!this.isRoot && this.isValidStore) {
+        if (!this.isRoot || !this.isValidStore || !this.store) {
             return;
         }
 
-        this.safeCallStoreMethod('onSetup');
 
-        const hooks = [
-            {
-                function: onMounted,
-                callback: this.safeCallStoreMethod('onMounted')
-            },
-            {
-                function: onUnmounted,
-                callback: (...args: unknown[]) => {
-                    this.safeCallStoreMethod('onUnmounted').apply(this.store, args);
-                    delete this.pinia!.state!.value[this.storeId];
-                    this.store!.$dispose();
-                }
-            },
-            {
-                function: onBeforeMount,
-                callback: this.safeCallStoreMethod('onBeforeMounted')
-            },
-            {
-                function: onBeforeUnmount,
-                callback: this.safeCallStoreMethod('onBeforeUnmounted')
-            },
-            {
-                function: onErrorCaptured,
-                callback: this.safeCallStoreMethod('onErrorCaptured')
-            },
-            {
-                function: onErrorCaptured,
-                callback: this.safeCallStoreMethod('onErrorCaptured')
-            },
-            {
-                function: onUpdated,
-                callback: this.safeCallStoreMethod('onUpdated')
-            },
-            {
-                function: onRenderTracked,
-                callback: this.safeCallStoreMethod('onRenderTracked')
-            },
-            {
-                function: onRenderTriggered,
-                callback: this.safeCallStoreMethod('onRenderTriggered')
-            },
-            {
-                function: onActivated,
-                callback: this.safeCallStoreMethod('onActivated')
-            },
-            {
-                function: onDeactivated,
-                callback: this.safeCallStoreMethod('onDeactivated')
-            },
-            {
-                function: onServerPrefetch,
-                callback: this.safeCallStoreMethod('onServerPrefetch')
-            },
-            {
-                function: onBeforeRouteLeave,
-                callback: this.safeCallStoreMethod('onBeforeRouteLeave')
-            },
-            {
-                function: onBeforeRouteUpdate,
-                callback: this.safeCallStoreMethod('onBeforeRouteUpdate')
-            }
+        const hooks: (keyof StoreDefinition)[] = [
+            'onUnmounted',
+            'onBeforeMounted',
+            'onBeforeUnmounted',
+            'onActivated',
+            'onDeactivated',
+            'onErrorCaptured',
+            'onRenderTracked',
+            'onRenderTriggered',
+            'onServerPrefetch',
+            'onUpdated'
         ];
 
-        for (const hook of hooks) {
-            hook.function((...args: unknown[]) => hook.callback.apply(this.store, args));
+        for (const hookName of hooks) {
+            // @ts-expect-error
+            if (!this.store[hookName] || !('apply' in this.store[hookName])) {
+                continue;
+            }
+
+            const vueHook = ViewModelFactory.findVueHook(hookName);
+            if (!vueHook) {
+                continue;
+            }
+
+            // @ts-expect-error
+            // eslint-disable-next-line prefer-spread
+            vueHook((...args: unknown[]) => this.store[hookName].apply(this.store, args));
         }
     }
 
-    private safeCallStoreMethod(methodName: keyof StoreDefinition) {
-        if (typeof methodName !== 'symbol' &&
-            this.store && this.store[methodName] &&
-            typeof this.store[methodName] === 'function'
-        ) {
-            return this.store[methodName] as unknown as CallableFunction;
+    private static findVueHook(name: string) {
+        switch (name) {
+        case 'onMounted':
+            return onMounted;
+        case 'onUnmounted':
+            return onUnmounted;
+        case 'onBeforeMounted':
+            return onBeforeMount;
+        case 'onBeforeUnmounted':
+            return onBeforeUnmount;
+        case 'onActivated':
+            return onActivated;
+        case 'onDeactivated':
+            return onDeactivated;
+        case 'onErrorCaptured':
+            return onErrorCaptured;
+        case 'onRenderTracked':
+            return onRenderTracked;
+        case 'onRenderTriggered':
+            return onRenderTriggered;
+        case 'onServerPrefetch':
+            return onServerPrefetch;
+        case 'onUpdated':
+            return onUpdated;
+        default:
+            return;
         }
-
-        return new Function();
     }
 }
