@@ -1,6 +1,6 @@
 {
   "name": "nuxt-mvvm",
-  "version": "1.0.16-alpha1",
+  "version": "1.0.17",
   "description": "Intuitive, type safe and flexible MVVM implementation for nuxt based applications",
   "repository": {
     "url": "https://github.com/Fidden/nuxt-mvvm.git",
