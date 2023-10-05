@@ -4,7 +4,6 @@ import 'reflect-metadata';
 import {container} from 'tsyringe';
 import {watch} from 'vue';
 
-
 export default defineNuxtPlugin((nuxtApp) => {
     const pinia = createPinia();
     nuxtApp.vueApp.use(pinia);
@@ -17,23 +16,28 @@ export default defineNuxtPlugin((nuxtApp) => {
         const newState: typeof piniaState = {};
 
         for (const key of Object.keys(piniaState)) {
-            if (piniaState.hasOwnProperty(key)) {
-                for (const property in piniaState[key]) {
-                    if (piniaState[key][property]) {
-                        /**
-						 * Exclude injected data
-						 */
-                        if (piniaState[key][property]?.$injected) {
-                            continue;
-                        }
+            if (!piniaState.hasOwnProperty(key)) {
+                continue;
+            }
 
-                        if (!newState[key]) {
-                            newState[key] = {};
-                        }
-
-                        newState[key][property] = piniaState[key][property];
-                    }
+            for (const property in piniaState[key]) {
+                const propertyValue = piniaState[key][property];
+                if (propertyValue === undefined || propertyValue === null) {
+                    continue;
                 }
+
+                /**
+                 * Exclude properties marked as injected, cuz they will not serialize and we get pojo error
+                 */
+                if (propertyValue?.$injected) {
+                    continue;
+                }
+
+                if (!newState[key]) {
+                    newState[key] = {};
+                }
+
+                newState[key][property] = piniaState[key][property];
             }
         }
 
