@@ -18,9 +18,9 @@ import {
     useNuxtApp,
     useRouter
 } from '#imports';
-import {BaseViewModel, ClassInstanceType, VmFlags} from '#module/runtime/types';
-import {InjectionToken} from '#module/types/injection-token';
-import {ModuleExt} from '#module/types/module-ext';
+import {BaseViewModel, ClassInstanceType, VmFlags} from '../../runtime/types';
+import {InjectionToken} from '../../types/injection-token';
+import {ModuleExt} from '../../types/module-ext';
 import {defineStore, getActivePinia, Pinia, Store} from 'pinia';
 
 
