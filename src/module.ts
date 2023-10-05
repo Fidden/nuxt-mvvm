@@ -22,10 +22,6 @@ export default defineNuxtModule({
 
         addImports([
             {
-                name: 'BaseViewModel',
-                from: resolver.resolve('./runtime/types')
-            },
-            {
                 name: 'inject',
                 as: 'injectDep',
                 from: 'tsyringe'
