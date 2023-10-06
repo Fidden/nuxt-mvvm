@@ -3,7 +3,7 @@ import {
     ILifeCycle,
     IRouterable,
     onActivated,
-    onBeforeMount,
+    onBeforeMount, onBeforeRouteLeave, onBeforeRouteUpdate,
     onBeforeUnmount,
     onDeactivated,
     onErrorCaptured,
@@ -172,6 +172,7 @@ export class ViewModelFactory<T extends ClassInstanceType, G extends InstanceTyp
 
 
         const hooks: (keyof StoreDefinition)[] = [
+            'onMounted',
             'onUnmounted',
             'onBeforeMounted',
             'onBeforeUnmounted',
@@ -183,6 +184,9 @@ export class ViewModelFactory<T extends ClassInstanceType, G extends InstanceTyp
             'onServerPrefetch',
             'onUpdated'
         ];
+
+        if (this.store['onSetup'])
+            this.store['onSetup']();
 
         for (const hookName of hooks) {
             // @ts-expect-error
@@ -225,6 +229,10 @@ export class ViewModelFactory<T extends ClassInstanceType, G extends InstanceTyp
             return onServerPrefetch;
         case 'onUpdated':
             return onUpdated;
+        case 'onBeforeRouteUpdate':
+            return onBeforeRouteUpdate;
+        case 'onBeforeRouteLeave':
+            return onBeforeRouteLeave;
         default:
             return;
         }
