@@ -179,7 +179,7 @@ Router interfaces:
 
 ### Decorators
 
-1. `ViewModel` - Labels a class as a view-model. Apply this decorator when the class doesn't represent a screen or a component.
+1. `ViewModel` - Labels a class as a view-model. Apply this decorator when the class represent a screen or a component.
 2. `injectDep` - Injects a dependency into a view-model.
 3. `ScreenVm` - Signifies that the class is a screen view-model.
 4. `ComponentVm` - Identifies a class as a component view-model.
