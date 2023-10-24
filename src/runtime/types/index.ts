@@ -73,7 +73,8 @@ export type ILifeCycle = Partial<
     IRenderTriggerable &
     IDeactivatable &
     IActivatable &
-    IServicePrefetchable
+    IServicePrefetchable &
+    IRouterable
 >;
 
 export enum VmFlags {

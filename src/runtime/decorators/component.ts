@@ -5,7 +5,7 @@ import {ViewModel} from './view-model';
  * Factory function for creating a component view-model.
  *
  * @remark Just syntax sugar, equals to ViewModel({type: 'injectable'})
- *
+ * @deprecated
  * @returns {Function} - The decorated constructor function.
  */
 export function ComponentVm() {

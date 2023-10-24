@@ -181,8 +181,8 @@ Router interfaces:
 
 1. `ViewModel` - Labels a class as a view-model. Apply this decorator when the class represent a screen or a component.
 2. `injectDep` - Injects a dependency into a view-model.
-3. `ScreenVm` - Signifies that the class is a screen view-model.
-4. `ComponentVm` - Identifies a class as a component view-model.
+3. ~~`ScreenVm` - Signifies that the class is a screen view-model.~~ (deprecated)
+4. ~~`ComponentVm` - Identifies a class as a component view-model.~~ (deprecated)
 
 ### Reusable Composition Functions
 
@@ -200,41 +200,5 @@ class ViewModel extends BaseViewModel {
     constructor() {
         super();
     }
-}
-```
-
-#### Creating screen view model
-
-```ts
-/**
- * The ScreenVm decorator identifies a view-model as related to a screen. This implies that
- * a single instance of `ScreenViewModel` is available throughout the entire application.
- **/
-
-@ScreenVm()
-class ScreenViewModel extends BaseViewModel {
-    constructor() {
-        super();
-    }
-
-    // some logic here...
-}
-```
-
-#### Creating component view model
-
-```ts
-/**
- * The ComponentVm decorator signifies a view-model as related to a component,
- * allowing `ScreenViewModel` to possess several instances (each for a different component)
- **/
-
-@ComponentVm()
-class ButtonVm extends BaseViewModel {
-    constructor() {
-        super();
-    }
-
-    // some logic here...
 }
 ```
